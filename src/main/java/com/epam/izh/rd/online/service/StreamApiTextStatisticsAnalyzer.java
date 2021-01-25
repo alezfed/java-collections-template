@@ -2,50 +2,52 @@ package com.epam.izh.rd.online.service;
 
 import com.epam.izh.rd.online.helper.Direction;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
-import static java.util.Collections.*;
-
-/**
- * Данный класс обязан использовать StreamApi из функционала Java 8. Функциональность должна быть идентична
- * {@link SimpleTextStatisticsAnalyzer}.
- */
 public class StreamApiTextStatisticsAnalyzer implements TextStatisticsAnalyzer {
     @Override
     public int countSumLengthOfWords(String text) {
-        return 0;
+        return Arrays.stream(text.split("(?U)\\W+")).mapToInt(String::length).sum();
     }
 
     @Override
     public int countNumberOfWords(String text) {
-        return 0;
+        return (int) Arrays.stream(text.split("(?U)\\W+")).count();
     }
 
     @Override
     public int countNumberOfUniqueWords(String text) {
-        return 0;
+        return Arrays.stream(text.split("(?U)\\W+")).collect(Collectors.toSet()).size();
     }
 
     @Override
     public List<String> getWords(String text) {
-        return emptyList();
+        return Arrays.stream(text.split("(?U)\\W+")).collect(Collectors.toList());
     }
 
     @Override
     public Set<String> getUniqueWords(String text) {
-        return emptySet();
+        return Arrays.stream(text.split("(?U)\\W+")).collect(Collectors.toSet());
     }
 
     @Override
     public Map<String, Integer> countNumberOfWordsRepetitions(String text) {
-        return emptyMap();
+        return Arrays.stream(text.split("(?U)\\W+")).collect(Collectors.toMap(k -> k, k -> 1, (a, b) -> a + 1));
     }
 
     @Override
     public List<String> sortWordsByLength(String text, Direction direction) {
-        return emptyList();
+        List<String> words;
+        if (direction == Direction.ASC) {
+            words = Arrays.stream(text.split("(?U)\\W+"))
+                    .sorted(Comparator.comparingInt(String::length))
+                    .collect(Collectors.toList());
+        } else {
+            words = Arrays.stream(text.split("(?U)\\W+"))
+                    .sorted(Collections.reverseOrder(Comparator.comparingInt(String::length)))
+                    .collect(Collectors.toList());
+        }
+        return words;
     }
 }
